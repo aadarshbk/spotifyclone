@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Music Player</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+    }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #1db954; /* Spotify green */
+    }
+    .songs {
+        list-style-type: none;
+        padding: 0;
+        margin-bottom: 20px;
+    }
+    .song {
+        padding: 10px;
+        margin-bottom: 5px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .song:hover {
+        background-color: #f1f1f1;
+    }
+    .button {
+        padding: 10px 20px;
+        background-color: #1db954; /* Spotify green */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .button:hover {
+        background-color: #1ed760; /* Slightly lighter green */
+    }
+    .spotify-logo {
+        width: 100px;
+        margin: 0 auto;
+        display: block;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <img src="spotify-logo.jpg" alt="Spotify Logo" class="spotify-logo">
+    <h1>Simple Music Player</h1>
+    <ul class="songs" id="songs-list"></ul>
+    <div style="text-align: center;">
+        <button class="button" id="play-button">Play Your Song</button>
+        <button class="button" id="stop-button">Stop</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var songsList = document.getElementById('songs-list');
+        var playButton = document.getElementById('play-button');
+        var stopButton = document.getElementById('stop-button');
+        
+        function fetchSongs() {
+            fetch('http://localhost:8080/songs')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(song => {
+                        var listItem = document.createElement('li');
+                        listItem.classList.add('song');
+                        listItem.textContent = `${song.title} - ${song.artist}`;
+                        songsList.appendChild(listItem);
+                    });
+                });
+        }
+        
+        fetchSongs();
+        
+        playButton.addEventListener('click', function() {
+            var selectedSongId = 1; // Change this to the selected song ID
+            fetch(`http://localhost:8080/play/${selectedSongId}`, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                });
+        });
+        
+        stopButton.addEventListener('click', function() {
+            fetch('http://localhost:8080/stop', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                });
+        });
+    });
+</script>
+</body>
+</html>
